@@ -6,7 +6,7 @@ const { hashSync, genSaltSync } = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const port = normalizePort(process.env.PORT || "40039");
+const port = normalizePort(process.env.PORT || "8000");
 app.set("port", port);
 
 const server = http.createServer(app);
@@ -50,6 +50,7 @@ server.listen(port, async () => {
           email: "4dmin.procurement@gmail.com",
           password: hashSync("admin", salt),
           role: "admin",
+          is_active: true,
         },
       });
       console.log("admin user account created");

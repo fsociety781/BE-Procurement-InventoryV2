@@ -1,6 +1,8 @@
 const prisma = require("../../bin/prisma");
 const { hashSync, genSaltSync, compareSync, hash } = require("bcrypt");
-
+const {
+  sendEmailVerification
+} = require("../../email/MemberNotifikasiEmail");
 class MemberController {
   static async getMembers(req, res) {
     try {
@@ -181,9 +183,10 @@ class MemberController {
         },
       });
 
+      await sendEmailVerification(member, email);
       return res.status(201).json({
         status: 201,
-        message: "Member account successfully created",
+        message: "Member account successfully created. A verification email has been sent.",
         data: {
           name: member.name,
           email: member.email,

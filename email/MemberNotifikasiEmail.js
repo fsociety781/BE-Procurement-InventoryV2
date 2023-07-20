@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const path = require("path");
 const ejs = require("ejs");
+const jwt = require('jsonwebtoken');
 
 // Fungsi untuk mengirim email ke admin
 async function sendEmailToAdmin(item, user, pengajuan) {
@@ -98,7 +99,47 @@ async function sendEmailToUser(userEmail, item, user, pengajuan) {
   }
 }
 
+//Function untuk mengirim email ke user untuk verifikasi email
+async function sendEmailVerification(member) {
+  try { 
+    const namaUser = member.name;
+    const token = jwt.sign({
+        email: member.email,
+    },'secretToken', { expiresIn: '1h' });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "info.procurement04@gmail.com",
+        pass: "pwsdsrlmxhlltgpa",
+      },
+    });
+    
+    const templatePath = path.resolve(
+      __dirname,
+      "../template",
+      "templateEmailVerif.ejs"
+    );
+
+    const templateEmailVerif = await ejs.renderFile(templatePath, {
+      namaUser,
+      token,
+    });
+
+    const mailOptions = {
+      from: "info.procurement04@gmail.com",
+      to: member.email,
+      subject: "PRORYVI : Email Verification",
+      html: templateEmailVerif,
+    };
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent to user: " + info.response);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   sendEmailToAdmin,
   sendEmailToUser,
+  sendEmailVerification
 };

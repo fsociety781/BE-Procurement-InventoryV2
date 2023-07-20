@@ -6,6 +6,7 @@ const adminMiddleware = require("../../middleware/adminMiddleware");
 const DashboardController = require("../../controller/Admin/DashboardController");
 const MemberController = require("../../controller/Admin/MemberController");
 const ProcurementController = require("../../controller/Admin/ProcurementController");
+const EmailVerifyController = require("../../controller/EmailVerifyController");
 
 //Router admin untuk memanipulasi akun member
 admin.get("/admin", AuthMiddleware, adminMiddleware, DashboardController.index);
@@ -30,6 +31,9 @@ admin.post(
   adminMiddleware,
   MemberController.storeMember
 );
+
+admin.get("/email/verify/:token", EmailVerifyController.verifyEmail);
+
 admin.put(
   "/admin/member/:id",
   AuthMiddleware,
